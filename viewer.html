@@ -124,7 +124,20 @@
           }).addTo(map);
         }
 
-        statusElement.textContent = "Location received";
+        const lastUpdate = new Date(data.updated_at);
+        const ageSeconds = (Date.now() - lastUpdate.getTime()) / 1000;
+
+        if (data.is_active === false) {
+          statusElement.textContent =
+            "Sharing stopped — showing last known location";
+        } else if (ageSeconds > 60) {
+          statusElement.textContent =
+            "Location stale — no recent update";
+        } else if (data.is_active === true) {
+          statusElement.textContent = "Live location";
+        } else {
+          statusElement.textContent = "Sharing status unknown";
+        }
         detailsElement.textContent =
           "Accuracy: " +
           (data.accuracy ?? "Unknown") +
