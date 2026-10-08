@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Megh AI — Location Viewer</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    header {
+      padding: 20px;
+      background: #1e293b;
+      text-align: center;
+    }
+
+    #status {
+      padding: 14px;
+      text-align: center;
+      color: #fbbf24;
+    }
+
+    #map {
+      height: 65vh;
+      min-height: 350px;
+      width: 100%;
+    }
+
+    #details {
+      padding: 16px;
+      text-align: center;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h2>📍 Megh AI</h2>
+    <div>Shared Location Viewer</div>
+  </header>
+
+  <div id="status">Connecting to location service...</div>
+  <div id="map"></div>
+  <div id="details">Waiting for location data...</div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    const FUNCTION_URL =
+      "https://ukywxlvvszgkgcrpxszs.supabase.co/functions/v1/location-view";
+
+    const VIEW_CODE = window.location.hash.substring(1);
+
+    const statusElement = document.getElementById("status");
+    const detailsElement = document.getElementById("details");
+
+    const map = L.map("map").setView([20, 0], 2);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    let marker = null;
+    let accuracyCircle = null;
+
+    async function updateLocation() {
+      if (!VIEW_CODE) {
+        statusElement.textContent =
+          "Missing viewer code. Open your private viewer link.";
+        return;
+      }
+
+      try {
+        const response = await fetch(FUNCTION_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            view_code: VIEW_CODE
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          statusElement.textContent =
+            data.error || "Unable to retrieve location.";
+          return;
+        }
+
+        const position = [data.latitude, data.longitude];
+
+        if (!marker) {
+          marker = L.marker(position)
+            .addTo(map)
+            .bindPopup("Shared location")
+            .openPopup();
+
+          map.setView(position, 16);
+        } else {
+          marker.setLatLng(position);
+        }
+
+        if (accuracyCircle) {
+          map.removeLayer(accuracyCircle);
+        }
+
+        if (typeof data.accuracy === "number") {
+          accuracyCircle = L.circle(position, {
+            radius: data.accuracy
+          }).addTo(map);
+        }
+
+        statusElement.textContent = "Location received";
+        detailsElement.textContent =
+          "Accuracy: " +
+          (data.accuracy ?? "Unknown") +
+          " metres | Last update: " +
+          new Date(data.updated_at).toLocaleString();
+
+      } catch (error) {
+        statusElement.textContent =
+          "Connection failed. Check your internet connection.";
+        console.error(error);
+      }
+    }
+
+    updateLocation();
+    setInterval(updateLocation, 10000);
+  </script>
+</body>
+</html>
