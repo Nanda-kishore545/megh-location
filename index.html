@@ -487,52 +487,47 @@ if (!WRITE_CODE) {
         Stop location sharing
     */
 
-    function stopSharing() {
 
-        if (watchId !== null) {
-
-            navigator.geolocation.clearWatch(
-                watchId
-            );
-
-            watchId = null;
-
-        }
-
-
-        statusElement.textContent =
-            "🔴 Location sharing is OFF";
-
-
-        detailsElement.textContent =
-            "Your location is no longer being shared.";
-
-
-        startButton.style.display =
-            "block";
-
-        stopButton.style.display =
-            "none";
-
-
-        showMessage(
-            "Location sharing stopped.",
-            "success"
-        );
-
+async function stopSharing() {
+    if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
     }
 
+    statusElement.textContent = "🔴 Location sharing is OFF";
+    detailsElement.textContent =
+        "Your location is no longer being shared.";
 
-    startButton.addEventListener(
-        "click",
-        startSharing
-    );
+    startButton.style.display = "block";
+    stopButton.style.display = "none";
 
+    try {
+        const response = await fetch(
+            "YOUR_SUPABASE_PROJECT_URL/functions/v1/location-stop",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    write_code: WRITE_CODE
+                })
+            }
+        );
 
-    stopButton.addEventListener(
-        "click",
-        stopSharing
-    );
+        if (!response.ok) {
+            throw new Error("Could not update sharing status.");
+        }
+
+        showMessage("Location sharing stopped.", "success");
+    } catch (error) {
+        showMessage(
+            "GPS stopped, but the server may still show sharing as active. Please try again.",
+            "error"
+        );
+        console.error(error);
+    }
+}
 
 </script>
 
