@@ -53,11 +53,38 @@
 
   <div id="status">Connecting to location service...</div>
   <div id="map"></div>
+  <button id="getRouteButton" type="button" disabled>
+    🧭 Get Route in Google Maps
+  </button>
+
+<p id="routeMessage">Waiting for shared location...</p>
   <div id="details">Waiting for location data...</div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
+    
+    let latestLatitude = null;
+    let latestLongitude = null;
+
+    const getRouteButton = document.getElementById("getRouteButton");
+    const routeMessage = document.getElementById("routeMessage");
+
+    getRouteButton.addEventListener("click", function () {
+      if (latestLatitude === null || latestLongitude === null) {
+        routeMessage.textContent = "Shared location is not available yet.";
+        return;
+      }
+
+      const destination = `${latestLatitude},${latestLongitude}`;
+
+      const mapsUrl =
+        "https://www.google.com/maps/dir/?api=1" +
+        "&destination=" + encodeURIComponent(destination) +
+        "&travelmode=driving";
+
+      window.open(mapsUrl, "_blank", "noopener");
+  });
     const FUNCTION_URL =
       "https://ukywxlvvszgkgcrpxszs.supabase.co/functions/v1/location-view";
 
