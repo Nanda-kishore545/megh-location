@@ -503,7 +503,7 @@ async function stopSharing() {
 
     try {
         const response = await fetch(
-            "YOUR_SUPABASE_PROJECT_URL/functions/v1/location-stop",
+            "https://ukywxlvvszgkgcrpxszs.supabase.co/functions/v1/location-stop",
             {
                 method: "POST",
                 headers: {
@@ -530,6 +530,7 @@ async function stopSharing() {
 }
 
 startButton.addEventListener("click", startSharing);
+stopButton.addEventListener("click", stopSharing);
 
 </script>
 
