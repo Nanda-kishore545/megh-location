@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101827">
+  <title>Megh AI | Location Dashboard</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1120;
+      color: #edf2ff;
+      padding: 24px 14px;
+    }
+    main { max-width: 680px; margin: auto; }
+    header { margin: 12px 0 26px; }
+    h1 { margin: 0 0 8px; font-size: 30px; }
+    h2 { font-size: 19px; margin-top: 0; }
+    p { color: #aab7d0; line-height: 1.5; }
+    .card {
+      background: #151f32;
+      border: 1px solid #29364c;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      color: #d5def0;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 13px;
+      background: #0b1120;
+      color: white;
+      border: 1px solid #3a4962;
+      border-radius: 9px;
+      font-size: 15px;
+    }
+    button, .button {
+      display: inline-block;
+      width: 100%;
+      padding: 13px;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 9px;
+      background: #3878f6;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    button.secondary, .button.secondary {
+      background: #26344b;
+      border: 1px solid #42516a;
+    }
+    button.danger { background: #8b303b; }
+    .contact {
+      border-top: 1px solid #344158;
+      padding: 14px 0;
+    }
+    .contact-name { font-weight: bold; }
+    .contact-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .contact-actions button { flex: 1; }
+    .small { font-size: 12px; }
+    #message { min-height: 20px; color: #9dd8b0; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>📍 Megh AI</h1>
+    <p>Your location-sharing dashboard. Share your link and manage saved viewer links from one place.</p>
+  </header>
+
+  <section class="card">
+    <h2>📤 Share my location</h2>
+    <p>Save your own sharing link once. When you want to share it, open WhatsApp directly from here.</p>
+
+    <label for="myShareLink">My sharing link</label>
+    <input id="myShareLink" type="url"
+      placeholder="Paste your existing sharing link">
+
+    <button id="saveShare">Save my sharing link</button>
+    <button id="shareWhatsApp">Share link on WhatsApp</button>
+    <p class="small">WhatsApp will open with your link ready to send. Choose the recipient and tap Send.</p>
+  </section>
+
+  <section class="card">
+    <h2>🗺️ View someone's location</h2>
+    <p>Add a trusted person's viewer link once. Later, open their map here whenever you need it.</p>
+
+    <label for="personName">Person's name</label>
+    <input id="personName" type="text" placeholder="e.g. Friend">
+
+    <label for="personLink">Their viewer link</label>
+    <input id="personLink" type="url"
+      placeholder="Paste their viewer.html link">
+
+    <button id="addContact">Save viewer link</button>
+
+    <h2 style="margin-top:26px">👥 My saved people</h2>
+    <div id="contacts"></div>
+    <p id="emptyMessage">No saved people yet.</p>
+  </section>
+
+  <p id="message" role="status" aria-live="polite"></p>
+  <p class="small">Saved links stay in this browser on this device. Don't use this dashboard on a shared device. Only share location with people you trust.</p>
+</main>
+
+<script>
+  const SHARE_KEY = "meghAI_my_share_link";
+  const CONTACTS_KEY = "meghAI_saved_viewers";
+  const BASE_URL = "https://nanda-kishore545.github.io/megh-location/";
+
+  const shareInput = document.getElementById("myShareLink");
+  const nameInput = document.getElementById("personName");
+  const linkInput = document.getElementById("personLink");
+  const contactsDiv = document.getElementById("contacts");
+  const emptyMessage = document.getElementById("emptyMessage");
+  const message = document.getElementById("message");
+
+  function say(text) {
+    message.textContent = text;
+  }
+
+  function validProjectLink(value) {
+    try {
+      const url = new URL(value);
+      return url.origin === "https://nanda-kishore545.github.io"
+        && url.pathname.startsWith("/megh-location/")
+        && (url.pathname === "/megh-location/"
+            || url.pathname === "/megh-location/index.html"
+            || url.pathname === "/megh-location/viewer.html");
+    } catch {
+      return false;
+    }
+  }
+
+  function getContacts() {
+    try {
+      const items = JSON.parse(localStorage.getItem(CONTACTS_KEY) || "[]");
+      return Array.isArray(items) ? items : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveContacts(items) {
+    localStorage.setItem(CONTACTS_KEY, JSON.stringify(items));
+  }
+
+  shareInput.value = localStorage.getItem(SHARE_KEY) || "";
+
+  document.getElementById("saveShare").addEventListener("click", () => {
+    const link = shareInput.value.trim();
+
+    if (!validProjectLink(link) ||
+        new URL(link).pathname === "/megh-location/viewer.html" ||
+        !new URL(link).hash.slice(1)) {
+      say("Enter your complete sharing link, including its private code after #.");
+      return;
+    }
+
+    localStorage.setItem(SHARE_KEY, link);
+    say("Your sharing link is saved on this device.");
+  });
+
+  document.getElementById("shareWhatsApp").addEventListener("click", () => {
+    const link = localStorage.getItem(SHARE_KEY) || shareInput.value.trim();
+
+    if (!validProjectLink(link) ||
+        new URL(link).pathname === "/megh-location/viewer.html" ||
+        !new URL(link).hash.slice(1)) {
+      say("Save your complete sharing link first.");
+      return;
+    }
+
+    const text = "Open this link on your phone and tap Start Sharing Location if you want to share your location with me:\n" + link;
+    window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
+  });
+
+  document.getElementById("addContact").addEventListener("click", () => {
+    const name = nameInput.value.trim();
+    const link = linkInput.value.trim();
+
+    if (!name) {
+      say("Enter the person's name.");
+      return;
+    }
+
+    if (!validProjectLink(link) ||
+        new URL(link).pathname !== "/megh-location/viewer.html" ||
+        !new URL(link).hash.slice(1)) {
+      say("Enter their complete viewer.html link, including its private code after #.");
+      return;
+    }
+
+    const contacts = getContacts();
+    contacts.push({
+      id: Date.now().toString(),
+      name,
+      link
+    });
+
+    saveContacts(contacts);
+    nameInput.value = "";
+    linkInput.value = "";
+    renderContacts();
+    say("Viewer link saved.");
+  });
+
+  function renderContacts() {
+    const contacts = getContacts();
+    contactsDiv.replaceChildren();
+    emptyMessage.hidden = contacts.length > 0;
+
+    contacts.forEach(person => {
+      const item = document.createElement("div");
+      item.className = "contact";
+
+      const title = document.createElement("div");
+      title.className = "contact-name";
+      title.textContent = person.name;
+
+      const actions = document.createElement("div");
+      actions.className = "contact-actions";
+
+      const view = document.createElement("button");
+      view.textContent = "🗺️ View location";
+      view.addEventListener("click", () => {
+        window.location.href = person.link;
+      });
+
+      const share = document.createElement("button");
+      share.className = "secondary";
+      share.textContent = "Send link";
+      share.addEventListener("click", () => {
+        const text = "Here is my Megh AI viewer link:\n" + person.link;
+        window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
+      });
+
+      const remove = document.createElement("button");
+      remove.className = "danger";
+      remove.textContent = "Remove";
+      remove.addEventListener("click", () => {
+        saveContacts(getContacts().filter(p => p.id !== person.id));
+        renderContacts();
+        say("Saved contact removed.");
+      });
+
+      actions.append(view, share, remove);
+      item.append(title, actions);
+      contactsDiv.append(item);
+    });
+  }
+
+  renderContacts();
+</script>
+</body>
+</html>
