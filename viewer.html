@@ -122,6 +122,25 @@
 
         const data = await response.json();
 
+        
+if (
+    data.latitude != null &&
+    data.longitude != null &&
+    Number.isFinite(Number(data.latitude)) &&
+    Number.isFinite(Number(data.longitude))
+) {
+    latestLatitude = Number(data.latitude);
+    latestLongitude = Number(data.longitude);
+
+    getRouteButton.disabled = false;
+    routeMessage.textContent = "Shared location is ready for directions.";
+} else {
+    latestLatitude = null;
+    latestLongitude = null;
+    getRouteButton.disabled = true;
+    routeMessage.textContent = "Shared coordinates are unavailable.";
+}
+
         if (!response.ok) {
           statusElement.textContent =
             data.error || "Unable to retrieve location.";
