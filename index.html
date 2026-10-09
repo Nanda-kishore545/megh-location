@@ -404,83 +404,71 @@
         Start location sharing
     */
 
-    function startSharing() {
 
-        if (!navigator.geolocation) {
-
-            showMessage(
-                "Your browser does not support location services.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        if (
-            LOCATION_UPDATE_URL.includes(
-                "YOUR_LOCATION"
-            )
-        ) {
-
-            showMessage(
-                "Location server URL has not been configured yet.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-if (!WRITE_CODE) {
-    showMessage(
-        "Invalid location sharing link.",
-        "error"
-    );
-    return;
-}
-
-
-        statusElement.textContent =
-            "🟡 Requesting location...";
-
-
-        detailsElement.textContent =
-            "Please allow location access in your browser.";
-
-
-        startButton.style.display =
-            "none";
-
-        stopButton.style.display =
-            "block";
-
-
-        /*
-            watchPosition continuously monitors
-            location changes.
-        */
-
-        watchId =
-            navigator.geolocation.watchPosition(
-
-                sendLocation,
-
-                locationError,
-
-                {
-                    enableHighAccuracy: true,
-
-                    maximumAge: 10000,
-
-                    timeout: 20000
-                }
-
-            );
-
+async function startSharing() {
+    if (!navigator.geolocation) {
+        showMessage("Your browser does not support location services.", "error");
+        return;
     }
+
+    if (!WRITE_CODE) {
+        showMessage("Invalid location sharing link.", "error");
+        return;
+    }
+
+    statusElement.textContent = "🟡 Activating location sharing...";
+    detailsElement.textContent = "Please allow location access if prompted.";
+    startButton.disabled = true;
+
+    try {
+        const response = await fetch(
+            "https://ukywxlvvszgkgcrpxszs.supabase.co/functions/v1/location-start",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ write_code: WRITE_CODE })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || "Could not activate sharing.");
+        }
+
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+
+        statusElement.textContent = "🟡 Requesting location...";
+        detailsElement.textContent = "Waiting for your phone's GPS.";
+        startButton.style.display = "none";
+        stopButton.style.display = "block";
+
+        watchId = navigator.geolocation.watchPosition(
+            sendLocation,
+            locationError,
+            {
+                enableHighAccuracy: true,
+                maximumAge: 10000,
+                timeout: 20000
+            }
+        );
+
+        showMessage("Sharing activated. Waiting for GPS...", "success");
+
+    } catch (error) {
+        console.error("Start sharing error:", error);
+        statusElement.textContent = "🔴 Location sharing is OFF";
+        showMessage(error.message || "Unable to start sharing.", "error");
+        startButton.style.display = "block";
+        stopButton.style.display = "none";
+
+    } finally {
+        startButton.disabled = false;
+    }
+}
 
 
     /*
