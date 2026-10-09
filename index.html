@@ -489,6 +489,7 @@ if (!WRITE_CODE) {
 
 
 async function stopSharing() {
+    alert("Stop button clicked!");
     if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
         watchId = null;
