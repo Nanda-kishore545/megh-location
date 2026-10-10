@@ -2,270 +2,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101827">
-  <title>Megh AI | Location Dashboard</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b1120;
-      color: #edf2ff;
-      padding: 24px 14px;
-    }
-    main { max-width: 680px; margin: auto; }
-    header { margin: 12px 0 26px; }
-    h1 { margin: 0 0 8px; font-size: 30px; }
-    h2 { font-size: 19px; margin-top: 0; }
-    p { color: #aab7d0; line-height: 1.5; }
-    .card {
-      background: #151f32;
-      border: 1px solid #29364c;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      margin: 14px 0 7px;
-      color: #d5def0;
-      font-size: 14px;
-    }
-    input {
-      width: 100%;
-      padding: 13px;
-      background: #0b1120;
-      color: white;
-      border: 1px solid #3a4962;
-      border-radius: 9px;
-      font-size: 15px;
-    }
-    button, .button {
-      display: inline-block;
-      width: 100%;
-      padding: 13px;
-      margin-top: 12px;
-      border: 0;
-      border-radius: 9px;
-      background: #3878f6;
-      color: white;
-      font-size: 15px;
-      font-weight: bold;
-      text-align: center;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    button.secondary, .button.secondary {
-      background: #26344b;
-      border: 1px solid #42516a;
-    }
-    button.danger { background: #8b303b; }
-    .contact {
-      border-top: 1px solid #344158;
-      padding: 14px 0;
-    }
-    .contact-name { font-weight: bold; }
-    .contact-actions {
-      display: flex;
-      gap: 8px;
-    }
-    .contact-actions button { flex: 1; }
-    .small { font-size: 12px; }
-    #message { min-height: 20px; color: #9dd8b0; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071326">
+<title>Megh AI | Dashboard</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg:#061020; --panel:#0d1b30; --panel2:#10233c;
+  --line:#203b5d; --blue:#2585ff; --cyan:#51c9ff;
+  --green:#11c981; --text:#f2f7ff; --muted:#91a7c4;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 75% 0%,#102d50 0%,var(--bg) 45%);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.layout{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:100vh}
+aside{padding:28px 16px;border-right:1px solid #1c3451;background:#071326;display:flex;flex-direction:column;gap:28px}
+.brand{display:flex;align-items:center;gap:11px;padding:0 8px}
+.logo{width:43px;height:43px;border-radius:15px;background:linear-gradient(145deg,#43caff,#1769ff);display:grid;place-items:center;font-size:24px;box-shadow:0 0 28px #1687ff55}
+.brand strong{font-size:20px;letter-spacing:.3px}
+.brand small{display:block;color:var(--cyan);margin-top:4px}
+nav{display:grid;gap:8px}
+nav a{padding:13px 14px;border-radius:12px;color:#b6c7de;text-decoration:none;display:flex;gap:12px;align-items:center}
+nav a.active,nav a:hover{background:linear-gradient(90deg,#1c65bf,#123866);color:white}
+.aside-note{margin-top:auto;border:1px solid var(--line);background:linear-gradient(160deg,#102b4a,#0a1729);padding:17px;border-radius:16px;color:var(--muted);font-size:13px;line-height:1.6}
+main{min-width:0;padding:28px clamp(16px,3vw,42px) 40px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:25px}
+.eyebrow{font-size:12px;color:var(--cyan);letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(25px,3vw,34px);margin:7px 0}
+.sub{color:var(--muted);line-height:1.6;margin:0}
+.online{border:1px solid #17694e;background:#0a302b;color:#71f1b9;border-radius:30px;padding:9px 13px;font-size:12px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:17px}
+.card{background:linear-gradient(145deg,#10233bde,#09172bfa);border:1px solid var(--line);border-radius:19px;padding:22px;min-width:0;box-shadow:0 12px 35px #00000014}
+.hero{grid-column:span 12;position:relative;overflow:hidden;background:radial-gradient(ellipse at 90% 10%,#174d7a 0%,transparent 38%),linear-gradient(115deg,#102b4b,#09162a 70%)}
+.hero:after{content:"◎";position:absolute;right:5%;top:8px;font-size:130px;color:#55baff13;pointer-events:none}
+.hero-content{position:relative;z-index:1;max-width:720px}
+.card h2{font-size:18px;margin:0 0 9px}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.field{display:flex;gap:9px;margin-top:18px}
+input{width:100%;min-width:0;padding:13px 14px;border-radius:11px;border:1px solid #2a486c;background:#071326;color:white;outline:none}
+input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #51c9ff16}
+.btn{border:1px solid transparent;border-radius:11px;padding:12px 15px;font-weight:650;color:white;background:linear-gradient(135deg,#3296ff,#1767eb);transition:transform .15s,filter .15s;white-space:nowrap}
+.btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.btn.secondary{background:#122945;border-color:#2b496a}
+.btn.whatsapp{background:linear-gradient(120deg,#16d48a,#07965d);color:#03271a}
+.btn.danger{background:#4a1c2b;border-color:#793146}
+.btn.full{width:100%;margin-top:11px}
+.help{font-size:12px;color:var(--muted);line-height:1.6}
+#message{min-height:20px;color:#8ceac0;font-size:13px;margin:12px 0 0}
+.stats{grid-column:span 3}
+.stat-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:#15395d;color:#67c9ff;font-size:21px}
+.stat-label{color:var(--muted);font-size:13px;margin-top:16px}
+.stat-value{font-size:27px;font-weight:750;margin-top:5px}
+.friends{grid-column:span 7}
+.map-card{grid-column:span 5}
+.activity{grid-column:span 5}
+.safety{grid-column:span 7;background:linear-gradient(120deg,#102744,#0c1a2d)}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.person{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid #1d3551}
+.avatar{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#9159f5,#4d5dff);font-weight:800;flex-shrink:0}
+.person-info{flex:1;min-width:0}
+.person-name{font-weight:700;overflow-wrap:anywhere}
+.person-status{font-size:12px;color:var(--muted);margin-top:5px}
+.person-actions{display:flex;gap:7px;flex-wrap:wrap}
+.person-actions .btn{font-size:12px;padding:9px 10px}
+#mapPreview{height:225px;border-radius:14px;border:1px solid #294766;background:radial-gradient(ellipse at 50% 50%,#17446a,#0a1b30 70%);display:grid;place-items:center;text-align:center;padding:18px}
+.map-symbol{font-size:50px;filter:drop-shadow(0 0 15px #42baff)}
+.activity-item{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-top:1px solid #1d3551;font-size:13px;line-height:1.5}
+.dot{width:9px;height:9px;background:var(--green);border-radius:50%;margin-top:5px;box-shadow:0 0 12px #11c98180;flex-shrink:0}
+.safety-points{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.safety-points span{border:1px solid #254663;border-radius:12px;padding:10px 12px;font-size:12px;color:#c7d9ee}
+footer{text-align:center;color:#627b99;font-size:12px;padding-top:25px}
+@media(max-width:1050px){.stats{grid-column:span 6}.friends,.map-card,.activity,.safety{grid-column:span 12}}
+@media(max-width:650px){.layout{grid-template-columns:1fr}aside{padding:14px;border-right:0;border-bottom:1px solid var(--line);gap:14px}.brand{padding:0 4px}nav{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}nav a{justify-content:center;padding:11px 4px;font-size:12px;gap:5px;flex-direction:column}.aside-note{display:none}main{padding:22px 13px 30px}.card{padding:17px}.stats{grid-column:span 6}.field{flex-direction:column}.field .btn{width:100%}.person{align-items:flex-start;flex-wrap:wrap}.person-info{min-width:calc(100% - 65px)}.person-actions{width:100%;padding-left:54px}.online{font-size:11px}.topbar{align-items:flex-start}}
+</style>
 </head>
 <body>
-<main>
-  <header>
-    <h1>📍 Megh AI</h1>
-    <p>Your location-sharing dashboard. Share your link and manage saved viewer links from one place.</p>
+<div class="layout">
+<aside>
+  <div class="brand"><div class="logo">⌖</div><div><strong>Megh AI</strong><small>Your world, connected.</small></div></div>
+  <nav>
+    <a class="active" href="#home">⌂ <span>Dashboard</span></a>
+    <a href="#sharing">⌖ <span>My Location</span></a>
+    <a href="#friends">♧ <span>Friends</span></a>
+    <a href="#activity">◷ <span>Activity</span></a>
+  </nav>
+  <div class="aside-note">✦ <strong>Privacy first</strong><br>Share only with people you trust. You can stop location sharing at any time.</div>
+</aside>
+
+<main id="home">
+  <header class="topbar">
+    <div><div class="eyebrow">Your personal space</div><h1>Welcome to Megh AI</h1><p class="sub">Stay connected to the people who matter.</p></div>
+    <div class="online">● Dashboard ready</div>
   </header>
 
-  <section class="card">
-    <h2>📤 Share my location</h2>
-    <p>Save your own sharing link once. When you want to share it, open WhatsApp directly from here.</p>
+  <div class="grid">
+    <section class="card hero" id="sharing">
+      <div class="hero-content">
+        <div class="eyebrow">Location sharing</div>
+        <h2 style="font-size:25px;margin-top:9px">Your location. Your choice.</h2>
+        <p class="sub">Share your personal link with trusted people through WhatsApp.</p>
+        <label class="help" for="myShareLink" style="display:block;margin-top:20px">YOUR PRIVATE SHARING LINK</label>
+        <div class="field"><input id="myShareLink" type="url" placeholder="Paste your existing sharing link"><button class="btn" id="saveShare">Save link</button></div>
+        <div class="row" style="margin-top:11px;flex-wrap:wrap"><button class="btn secondary" id="copyShare">▣ Copy link</button><button class="btn whatsapp" id="shareWhatsApp">◉ Share via WhatsApp ↗</button></div>
+        <p class="help" style="margin-top:12px">WhatsApp opens a message for you to review and send. It never sends automatically.</p>
+      </div>
+    </section>
 
-    <label for="myShareLink">My sharing link</label>
-    <input id="myShareLink" type="url"
-      placeholder="Paste your existing sharing link">
+    <section class="card stats"><div class="stat-icon">♧</div><div class="stat-label">Saved people</div><div class="stat-value" id="friendCount">0</div><p class="help">Saved on this device</p></section>
+    <section class="card stats"><div class="stat-icon">⌖</div><div class="stat-label">Sharing status</div><div class="stat-value" style="font-size:20px">Consent first</div><p class="help">No silent location access</p></section>
+    <section class="card stats"><div class="stat-icon">◷</div><div class="stat-label">Activity</div><div class="stat-value" style="font-size:20px">Local</div><p class="help">Dashboard messages</p></section>
+    <section class="card stats"><div class="stat-icon">◇</div><div class="stat-label">Privacy</div><div class="stat-value" style="font-size:20px">Priority</div><p class="help">Share with care</p></section>
 
-    <button id="saveShare">Save my sharing link</button>
-    <button id="shareWhatsApp">Share link on WhatsApp</button>
-    <p class="small">WhatsApp will open with your link ready to send. Choose the recipient and tap Send.</p>
-  </section>
+    <section class="card friends" id="friends">
+      <div class="section-head"><div><h2>Friends & locations</h2><p class="sub">Manage viewer links you have received.</p></div><span class="stat-icon">♧</span></div>
+      <label class="help" for="personName">FRIEND'S NAME</label><input id="personName" placeholder="e.g. Arjun">
+      <label class="help" for="personLink" style="display:block;margin-top:12px">THEIR PRIVATE VIEWER LINK</label><input id="personLink" type="url" placeholder="Paste their viewer.html link">
+      <button class="btn full" id="addContact">＋ Save viewer link</button>
+      <p class="help">This is the current working method. Automatic friend requests will be connected after the invitation backend is secured.</p>
+      <div id="contacts" style="margin-top:12px"></div><p class="sub" id="emptyMessage" style="font-size:13px">No saved people yet. Add a viewer link above.</p>
+    </section>
 
-  <section class="card">
-    <h2>🗺️ View someone's location</h2>
-    <p>Add a trusted person's viewer link once. Later, open their map here whenever you need it.</p>
+    <section class="card map-card">
+      <div class="section-head"><div><h2>Location map</h2><p class="sub">Open a saved person's viewer map.</p></div><span class="stat-icon">⌖</span></div>
+      <div id="mapPreview"><div><div class="map-symbol">⌖</div><strong>Map preview</strong><p class="help">Choose a saved friend and tap View Location to open their live map.</p></div></div>
+      <p class="help">The map will only show a friend's location if their viewer link is valid and sharing is available.</p>
+    </section>
 
-    <label for="personName">Person's name</label>
-    <input id="personName" type="text" placeholder="e.g. Friend">
+    <section class="card activity" id="activity">
+      <div class="section-head"><div><h2>Recent activity</h2><p class="sub">Updates from this dashboard.</p></div><span class="stat-icon">♧</span></div>
+      <div id="activityList"><div class="activity-item"><span class="dot"></span><div><strong>Dashboard ready</strong><br><span class="help">Your sharing controls are available.</span></div></div></div>
+    </section>
 
-    <label for="personLink">Their viewer link</label>
-    <input id="personLink" type="url"
-      placeholder="Paste their viewer.html link">
-
-    <button id="addContact">Save viewer link</button>
-
-    <h2 style="margin-top:26px">👥 My saved people</h2>
-    <div id="contacts"></div>
-    <p id="emptyMessage">No saved people yet.</p>
-  </section>
-
+    <section class="card safety">
+      <div class="eyebrow">Megh AI promise</div><h2 style="font-size:22px;margin-top:10px">Stay connected. Stay in control.</h2>
+      <p class="sub">Location sharing should be transparent, voluntary, and easy to stop.</p>
+      <div class="safety-points"><span>◇ Consent first</span><span>⌁ Private links</span><span>◷ Stop anytime</span></div>
+    </section>
+  </div>
   <p id="message" role="status" aria-live="polite"></p>
-  <p class="small">Saved links stay in this browser on this device. Don't use this dashboard on a shared device. Only share location with people you trust.</p>
+  <footer>Megh AI · Built for safer connections · Saved links stay in this browser</footer>
 </main>
+</div>
 
 <script>
-  const SHARE_KEY = "meghAI_my_share_link";
-  const CONTACTS_KEY = "meghAI_saved_viewers";
-  const BASE_URL = "https://nanda-kishore545.github.io/megh-location/";
+const SHARE_KEY = "meghAI_my_share_link";
+const CONTACTS_KEY = "meghAI_saved_viewers";
+const BASE_URL = "https://nanda-kishore545.github.io/megh-location/";
 
-  const shareInput = document.getElementById("myShareLink");
-  const nameInput = document.getElementById("personName");
-  const linkInput = document.getElementById("personLink");
-  const contactsDiv = document.getElementById("contacts");
-  const emptyMessage = document.getElementById("emptyMessage");
-  const message = document.getElementById("message");
+const shareInput = document.getElementById("myShareLink");
+const nameInput = document.getElementById("personName");
+const linkInput = document.getElementById("personLink");
+const contactsDiv = document.getElementById("contacts");
+const emptyMessage = document.getElementById("emptyMessage");
+const message = document.getElementById("message");
 
-  function say(text) {
-    message.textContent = text;
+function say(text) {
+  message.textContent = text;
+}
+function validProjectLink(value) {
+  try {
+    const url = new URL(value);
+    return url.origin === "https://nanda-kishore545.github.io"
+      && (url.pathname === "/megh-location/"
+          || url.pathname === "/megh-location/index.html"
+          || url.pathname === "/megh-location/viewer.html");
+  } catch {
+    return false;
   }
-
-  function validProjectLink(value) {
-    try {
-      const url = new URL(value);
-      return url.origin === "https://nanda-kishore545.github.io"
-        && url.pathname.startsWith("/megh-location/")
-        && (url.pathname === "/megh-location/"
-            || url.pathname === "/megh-location/index.html"
-            || url.pathname === "/megh-location/viewer.html");
-    } catch {
-      return false;
-    }
+}
+function getContacts() {
+  try {
+    const items = JSON.parse(localStorage.getItem(CONTACTS_KEY) || "[]");
+    return Array.isArray(items) ? items : [];
+  } catch {
+    return [];
   }
+}
+function saveContacts(items) {
+  localStorage.setItem(CONTACTS_KEY, JSON.stringify(items));
+}
+shareInput.value = localStorage.getItem(SHARE_KEY) || "";
 
-  function getContacts() {
-    try {
-      const items = JSON.parse(localStorage.getItem(CONTACTS_KEY) || "[]");
-      return Array.isArray(items) ? items : [];
-    } catch {
-      return [];
-    }
+document.getElementById("saveShare").addEventListener("click", () => {
+  const link = shareInput.value.trim();
+  const url = (() => { try { return new URL(link); } catch { return null; } })();
+  if (!url || !validProjectLink(link) || url.pathname === "/megh-location/viewer.html" || !url.hash.slice(1)) {
+    say("Enter your complete sharing link, including its private code after #.");
+    return;
   }
+  localStorage.setItem(SHARE_KEY, link);
+  say("Your sharing link is saved on this device.");
+  addActivity("Your sharing link was saved.");
+});
 
-  function saveContacts(items) {
-    localStorage.setItem(CONTACTS_KEY, JSON.stringify(items));
+document.getElementById("copyShare").addEventListener("click", async () => {
+  const link = localStorage.getItem(SHARE_KEY) || shareInput.value.trim();
+  if (!link) { say("Enter and save your sharing link first."); return; }
+  try {
+    await navigator.clipboard.writeText(link);
+    say("Sharing link copied.");
+  } catch {
+    shareInput.focus(); shareInput.select();
+    say("Select the link and copy it manually.");
   }
+});
 
-  shareInput.value = localStorage.getItem(SHARE_KEY) || "";
-
-  document.getElementById("saveShare").addEventListener("click", () => {
-    const link = shareInput.value.trim();
-
-    if (!validProjectLink(link) ||
-        new URL(link).pathname === "/megh-location/viewer.html" ||
-        !new URL(link).hash.slice(1)) {
-      say("Enter your complete sharing link, including its private code after #.");
-      return;
-    }
-
-    localStorage.setItem(SHARE_KEY, link);
-    say("Your sharing link is saved on this device.");
-  });
-
-  document.getElementById("shareWhatsApp").addEventListener("click", () => {
-    const link = localStorage.getItem(SHARE_KEY) || shareInput.value.trim();
-
-    if (!validProjectLink(link) ||
-        new URL(link).pathname === "/megh-location/viewer.html" ||
-        !new URL(link).hash.slice(1)) {
-      say("Save your complete sharing link first.");
-      return;
-    }
-
-    const text = "Open this link on your phone and tap Start Sharing Location if you want to share your location with me:\n" + link;
-    window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
-  });
-
-  document.getElementById("addContact").addEventListener("click", () => {
-    const name = nameInput.value.trim();
-    const link = linkInput.value.trim();
-
-    if (!name) {
-      say("Enter the person's name.");
-      return;
-    }
-
-    if (!validProjectLink(link) ||
-        new URL(link).pathname !== "/megh-location/viewer.html" ||
-        !new URL(link).hash.slice(1)) {
-      say("Enter their complete viewer.html link, including its private code after #.");
-      return;
-    }
-
-    const contacts = getContacts();
-    contacts.push({
-      id: Date.now().toString(),
-      name,
-      link
-    });
-
-    saveContacts(contacts);
-    nameInput.value = "";
-    linkInput.value = "";
-    renderContacts();
-    say("Viewer link saved.");
-  });
-
-  function renderContacts() {
-    const contacts = getContacts();
-    contactsDiv.replaceChildren();
-    emptyMessage.hidden = contacts.length > 0;
-
-    contacts.forEach(person => {
-      const item = document.createElement("div");
-      item.className = "contact";
-
-      const title = document.createElement("div");
-      title.className = "contact-name";
-      title.textContent = person.name;
-
-      const actions = document.createElement("div");
-      actions.className = "contact-actions";
-
-      const view = document.createElement("button");
-      view.textContent = "🗺️ View location";
-      view.addEventListener("click", () => {
-        window.location.href = person.link;
-      });
-
-      const share = document.createElement("button");
-      share.className = "secondary";
-      share.textContent = "Send link";
-      share.addEventListener("click", () => {
-        const text = "Here is my Megh AI viewer link:\n" + person.link;
-        window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
-      });
-
-      const remove = document.createElement("button");
-      remove.className = "danger";
-      remove.textContent = "Remove";
-      remove.addEventListener("click", () => {
-        saveContacts(getContacts().filter(p => p.id !== person.id));
-        renderContacts();
-        say("Saved contact removed.");
-      });
-
-      actions.append(view, share, remove);
-      item.append(title, actions);
-      contactsDiv.append(item);
-    });
+document.getElementById("shareWhatsApp").addEventListener("click", () => {
+  const link = localStorage.getItem(SHARE_KEY) || shareInput.value.trim();
+  const url = (() => { try { return new URL(link); } catch { return null; } })();
+  if (!url || !validProjectLink(link) || url.pathname === "/megh-location/viewer.html" || !url.hash.slice(1)) {
+    say("Enter and save your complete sharing link first.");
+    return;
   }
+  const text = "Open this Megh AI link and choose Start Sharing Location only if you want to share your location with me:\n" + link;
+  window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
+  addActivity("Opened WhatsApp to share your invitation.");
+});
 
+document.getElementById("addContact").addEventListener("click", () => {
+  const name = nameInput.value.trim();
+  const link = linkInput.value.trim();
+  const url = (() => { try { return new URL(link); } catch { return null; } })();
+  if (!name) { say("Enter the person's name."); return; }
+  if (!url || !validProjectLink(link) || url.pathname !== "/megh-location/viewer.html" || !url.hash.slice(1)) {
+    say("Enter their complete private viewer.html link, including its code after #.");
+    return;
+  }
+  const contacts = getContacts();
+  contacts.push({ id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), name, link });
+  saveContacts(contacts);
+  nameInput.value = ""; linkInput.value = "";
   renderContacts();
+  say("Viewer link saved.");
+  addActivity("Saved a viewer link for " + name + ".");
+});
+
+function addActivity(text) {
+  const item = document.createElement("div");
+  item.className = "activity-item";
+  const dot = document.createElement("span");
+  dot.className = "dot";
+  const content = document.createElement("div");
+  const strong = document.createElement("strong");
+  strong.textContent = text;
+  const time = document.createElement("div");
+  time.className = "help";
+  time.textContent = new Date().toLocaleTimeString();
+  content.append(strong, time);
+  item.append(dot, content);
+  document.getElementById("activityList").prepend(item);
+  while (document.getElementById("activityList").children.length > 6) {
+    document.getElementById("activityList").lastElementChild.remove();
+  }
+}
+
+function renderContacts() {
+  const contacts = getContacts();
+  contactsDiv.replaceChildren();
+  emptyMessage.hidden = contacts.length > 0;
+  document.getElementById("friendCount").textContent = contacts.length;
+
+  contacts.forEach(person => {
+    const item = document.createElement("div");
+    item.className = "person";
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = (person.name || "?").trim().charAt(0).toUpperCase();
+    const info = document.createElement("div");
+    info.className = "person-info";
+    const title = document.createElement("div");
+    title.className = "person-name";
+    title.textContent = person.name;
+    const status = document.createElement("div");
+    status.className = "person-status";
+    status.textContent = "Saved viewer link";
+    info.append(title, status);
+
+    const actions = document.createElement("div");
+    actions.className = "person-actions";
+    const view = document.createElement("button");
+    view.className = "btn";
+    view.textContent = "⌖ View Location";
+    view.addEventListener("click", () => { window.location.href = person.link; });
+
+    const share = document.createElement("button");
+    share.className = "btn secondary";
+    share.textContent = "Send link";
+    share.addEventListener("click", () => {
+      const text = "Here is my Megh AI viewer link:\n" + person.link;
+      window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
+    });
+
+    const remove = document.createElement("button");
+    remove.className = "btn danger";
+    remove.textContent = "Remove";
+    remove.addEventListener("click", () => {
+      saveContacts(getContacts().filter(p => p.id !== person.id));
+      renderContacts();
+      say("Saved viewer link removed from this device.");
+      addActivity("Removed " + person.name + " from saved links.");
+    });
+    actions.append(view, share, remove);
+    item.append(avatar, info, actions);
+    contactsDiv.append(item);
+  });
+}
+renderContacts();
 </script>
 </body>
 </html>
